@@ -1,0 +1,25 @@
+flowable:
+  idm:
+    ldap:
+      enabled: true
+      server: ldap://deltaldap.deltaww.com
+      port: 3268
+      user: CN=SRV-TestAdmin.ADD,OU=Service,OU=Users,OU=TWTP1,OU=TW,OU=Delta,DC=delta,DC=corp
+      password: 2wsx!QAZ
+      base-dn: OU=Delta,DC=delta,DC=corp
+      attribute:
+        user-id: sAMAccountName
+        first-name: givenName
+        last-name: sn
+        email: email
+        group-id: sAMAccountName
+        group-name: cn
+      cache:
+        group-size: 1000
+      query:
+        user-by-id: (&(objectClass=user)(sAMAccountName={0}))
+        user-by-full-name-like: (&(objectClass=user)(|({0}=*{1}*)({2}=*{3}*)))
+        all-users: (objectClass=top)
+        groups-for-user: (&(objectClass=group)(sAMAccountName={0}))
+        all-groups: (objectClass=group)
+
