@@ -1,0 +1,30 @@
+flowable:
+  label-font-name: Microsoft YaHei
+  activity-font-name: Microsoft YaHei
+  annotation-font-name: Microsoft YaHei
+  rest-api-enabled: true
+  common:
+    app:
+      idm-url: http://localhost:8031/oaflow/modeler
+      idm-admin:
+        user: SRV-TestAdmin.ADD
+        password: 2wsx!QAZ
+  async-executor-activate: false
+  modeler:
+    app:
+      rest-enabled: true
+      decision-table-migration-enabled: true
+  idm:
+    app:
+      admin:
+        user-id: SRV-TestAdmin.ADD
+        password: 2wsx!QAZ
+        email: SRV-TestAdmin.ADD@deltaww.com
+      rest-enabled: true
+  rest:
+    app:
+      swagger-docs-enabled: true
+      admin:
+        user-id: SRV-TestAdmin.ADD
+        password: 2wsx!QAZ
+      authentication-mode: verify-privilege

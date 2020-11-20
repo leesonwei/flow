@@ -17,13 +17,9 @@ public class UserController {
     @Qualifier("processEngine")
     @Autowired
     private ProcessEngine processEngine;
-    @Qualifier("formEngine")
-    @Autowired
-    private FormEngine formEngine;
 
     @GetMapping("/login")
     public String getLoginPage(){
-        FormRepositoryService formRepositoryService = formEngine.getFormRepositoryService();
         RuntimeService runtimeService = processEngine.getRuntimeService();
         return Constant.THEMYLEAF_PREFIX + "/login";
     }
