@@ -2,20 +2,7 @@ server:
   port: 8042
 
 spring:
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://master.anywhere.com:3306/flowable_6_62?characterEncoding=UTF-8&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root123
-    hikari:
-      register-mbeans: true
-      pool-name: deltaww-oa-flow
-      allow-pool-suspension: true
-      idle-timeout: 5000
-      maximum-pool-size: 3
-      minimum-idle: 2
   profiles:
-    active: flowable,email
+    active: flowable,email,home
   main:
     allow-bean-definition-overriding: true

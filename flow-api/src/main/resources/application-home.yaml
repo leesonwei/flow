@@ -1,0 +1,15 @@
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://anywhere.anywhere.com:3306/flowable?characterEncoding=UTF-8&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    hikari:
+      register-mbeans: true
+      pool-name: deltaww-oa-flow
+      allow-pool-suspension: true
+      idle-timeout: 5000
+      maximum-pool-size: 3
+      minimum-idle: 2
