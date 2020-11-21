@@ -1,8 +1,41 @@
+OA-自定义流程开发
+
+使用flowable:
+	flowable rest api 学习                    (done)
+	flowable 整合ldap (参考之前{泽强}的文件)  (done)
+	flowable 发送邮件 (参考之前{泽强}的文件)  (done)
+	flowable 流程设计器整合                   (done)
+	flowable 整合到spring-boot项目-OAflow项目 (on-going)
+	OAflow 后端开发
+	OAflow 前端开发
+	OAflow 整合及测试
+	
+	页面前瞻
+	流程中心 | 表单中心 | 自定义流程 | 历史查看
+	
+更后面的计划	
+	自定义表单设计器
+	flowable HA机制?
+	flowable整合kafka/xxMQ
+	
+http://10.149.100.163:8031/modeler
+http://10.149.100.163:8031/idm
+http://10.149.100.163:8031/admin
+http://10.149.100.163:8031/workflow
+
 后台API开发 (a-admin, m-manager, u-user, b-both)
 
 1.获取当前用户信息(登录) modeler-app/rest/account
+http://localhost:8042/modeler-app/rest/account
+return UserRepresentation;
+1.1 登出
+http://localhost:8042/app/logout
+
+
 2.流程定义信息列表
+
 3.流程定义信息流程图
+
 4.表单列表
 5.通过表单查询流程定义列表
 6.启动流程

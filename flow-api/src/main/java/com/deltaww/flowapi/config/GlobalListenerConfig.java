@@ -5,6 +5,7 @@ import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.common.engine.api.delegate.event.FlowableEventDispatcher;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +17,7 @@ public class GlobalListenerConfig {
     @Autowired
     private SendEmailListener sendEmailListener;
 
-    @PostConstruct
+    @Bean
     public void addListener(){
         FlowableEventDispatcher eventDispatcher = processEngineConfiguration.getEventDispatcher();
         eventDispatcher.addEventListener(sendEmailListener, FlowableEngineEventType.TASK_ASSIGNED);
