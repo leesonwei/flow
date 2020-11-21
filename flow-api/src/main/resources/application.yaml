@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: flowable,email,dev
+    active: flowable,email,home
   main:
     allow-bean-definition-overriding: true
   thymeleaf:

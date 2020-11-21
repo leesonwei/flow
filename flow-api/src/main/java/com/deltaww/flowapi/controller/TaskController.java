@@ -25,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -50,8 +47,10 @@ public class TaskController extends BaseController {
     @Autowired
     protected FlowableTaskFormService taskFormService;
 
+
     @RequestMapping(value = {"/tasks"})
     public ModelAndView userTask(ModelAndView modelAndView){
+        modelAndView.addObject("currentMenu", "任务中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/tasks");
         /*ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
