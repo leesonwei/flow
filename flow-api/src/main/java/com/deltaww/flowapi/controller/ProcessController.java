@@ -10,6 +10,7 @@ import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
+import org.flowable.ui.common.model.ResultListDataRepresentation;
 import org.flowable.ui.task.service.runtime.FlowableProcessDefinitionService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceQueryService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceService;
@@ -39,11 +40,12 @@ public class ProcessController extends BaseController {
      * @param modelAndView
      * @return
      */
-    @GetMapping("/processes")
+    @GetMapping(value = {"/processes", "/processes/{latest}"})
     public ModelAndView processIndex(ModelAndView modelAndView){
         //todo 是否获取最新版本
         modelAndView.addObject("currentMenu", "流程中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/process");
+        ResultListDataRepresentation processDefinitions = processDefinitionService.getProcessDefinitions(null, null);
         return modelAndView;
     }
 

@@ -50,14 +50,14 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         privilige2.setLevel(1);
         privilige2.setUrl("/deltaflow/forms");
         deltaPriviliges.add(privilige2);
-        DeltaPrivilige privilige3 = new DeltaPrivilige();
+        /*DeltaPrivilige privilige3 = new DeltaPrivilige();
         privilige3.setId("34");
         privilige3.setName("任务中心");
         privilige3.setIcon("icon-form");
         privilige3.setType(0);
         privilige3.setLevel(1);
         privilige3.setUrl("/deltaflow/tasks");
-        deltaPriviliges.add(privilige3);
+        deltaPriviliges.add(privilige3);*/
         DeltaPrivilige privilige4 = new DeltaPrivilige();
         privilige4.setId("2");
         privilige4.setName("流程中心");

@@ -62,7 +62,7 @@
             <li class="nav-item">
               <a class="nav-link" id="profile-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
                  aria-selected="false">
-                <h6>审核中</h6>
+                <h6>待审核</h6>
               </a>
             </li>
             <li class="nav-item">
@@ -155,6 +155,7 @@
       </section>
       <footer th:include="deltaflow/template::footer" class="main-footer">
       </footer>
+      <div th:include="deltaflow/template::toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
     </div>
     <!-- JavaScript files-->
     <script src="/flowable/vendor/jquery/jquery.min.js"></script>
@@ -166,5 +167,6 @@
     <script src="/flowable/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <!-- Main File-->
     <script src="/flowable/js/front.js"></script>
+    <script src="/flowable/js/delta-custom.js"></script>
   </body>
 </html>

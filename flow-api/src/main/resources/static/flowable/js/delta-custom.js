@@ -1,0 +1,2 @@
+
+$('.toast').toast('show')
