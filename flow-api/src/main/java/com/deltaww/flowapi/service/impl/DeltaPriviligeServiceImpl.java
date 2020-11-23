@@ -1,10 +1,8 @@
 package com.deltaww.flowapi.service.impl;
 
-import com.deltaww.flowapi.common.Constant;
-import com.deltaww.flowapi.entity.DeltaPrivilige;
+import com.deltaww.flowapi.entity.DeltaPriviligeEntity;
 import com.deltaww.flowapi.service.DeltaPrivilligeService;
 import com.deltaww.flowapi.service.DeltaUserService;
-import org.flowable.idm.api.User;
 import org.flowable.ui.common.model.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
     @Autowired
     private DeltaUserService deltaUserService;
     @Override
-    public List<DeltaPrivilige> getUserPrivilige(String userId) {
+    public List<DeltaPriviligeEntity> getUserPrivilige(String userId) {
         UserRepresentation user = deltaUserService.getUser(userId);
 
         /*if (user.getGroups().contains(Constant.ADMIN)) {
@@ -32,24 +30,39 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         return priviges();
     }
 
-    private List<DeltaPrivilige> priviges(){
-        List<DeltaPrivilige> deltaPriviliges = new ArrayList<>();
-        DeltaPrivilige privilige = new DeltaPrivilige();
+    @Override
+    public List<DeltaPriviligeEntity> getUserButtonPrivilige(String userId, String parentId) {
+        List<DeltaPriviligeEntity> priviges = priviges();
+        List<DeltaPriviligeEntity> priviligeEntities = priviges.stream().filter(x -> x.getType() == 1 && x.getParentId().equals(parentId)).collect(Collectors.toList());
+        return priviligeEntities;
+    }
+
+    private List<DeltaPriviligeEntity> priviges(){
+        List<DeltaPriviligeEntity> deltaPriviligeEntities = new ArrayList<>();
+        DeltaPriviligeEntity privilige = new DeltaPriviligeEntity();
         privilige.setId("1");
         privilige.setName("首页");
         privilige.setIcon("icon-home");
         privilige.setType(0);
         privilige.setLevel(1);
         privilige.setUrl("/deltaflow/index");
-        deltaPriviliges.add(privilige);
-        DeltaPrivilige privilige2 = new DeltaPrivilige();
+        deltaPriviligeEntities.add(privilige);
+        DeltaPriviligeEntity privilige4 = new DeltaPriviligeEntity();
+        privilige4.setId("2");
+        privilige4.setName("流程中心");
+        privilige4.setIcon("icon-form");
+        privilige4.setType(0);
+        privilige4.setLevel(1);
+        privilige4.setUrl("/deltaflow/processes");
+        deltaPriviligeEntities.add(privilige4);
+        DeltaPriviligeEntity privilige2 = new DeltaPriviligeEntity();
         privilige2.setId("3");
         privilige2.setName("表单中心");
         privilige2.setIcon("icon-form");
         privilige2.setType(0);
         privilige2.setLevel(1);
         privilige2.setUrl("/deltaflow/forms");
-        deltaPriviliges.add(privilige2);
+        deltaPriviligeEntities.add(privilige2);
         /*DeltaPrivilige privilige3 = new DeltaPrivilige();
         privilige3.setId("34");
         privilige3.setName("任务中心");
@@ -58,15 +71,28 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         privilige3.setLevel(1);
         privilige3.setUrl("/deltaflow/tasks");
         deltaPriviliges.add(privilige3);*/
-        DeltaPrivilige privilige4 = new DeltaPrivilige();
-        privilige4.setId("2");
-        privilige4.setName("流程中心");
-        privilige4.setIcon("icon-form");
-        privilige4.setType(0);
-        privilige4.setLevel(1);
-        privilige4.setUrl("/deltaflow/processes");
-        deltaPriviliges.add(privilige4);
 
-        return deltaPriviliges.stream().sorted(Comparator.comparing(DeltaPrivilige::getId)).collect(Collectors.toList());
+
+        //buttons
+        DeltaPriviligeEntity button1 = new DeltaPriviligeEntity();
+        button1.setId("101");
+        button1.setName("新增流程");
+        button1.setIcon("icon-form");
+        button1.setType(1);
+        button1.setLevel(2);
+        button1.setParentId("2");
+        button1.setUrl("/modeler/#/processes");
+        deltaPriviligeEntities.add(button1);
+        /*DeltaPriviligeEntity button2 = new DeltaPriviligeEntity();
+        button2.setId("102");
+        button2.setName("编辑流程");
+        button2.setIcon("icon-form");
+        button2.setType(1);
+        button2.setLevel(2);
+        button2.setParentId("2");
+        button2.setUrl("/deltaflow/process/editor/{processDefinitionId}");
+        deltaPriviligeEntities.add(button2);*/
+
+        return deltaPriviligeEntities.stream().sorted(Comparator.comparing(DeltaPriviligeEntity::getId)).collect(Collectors.toList());
     }
 }

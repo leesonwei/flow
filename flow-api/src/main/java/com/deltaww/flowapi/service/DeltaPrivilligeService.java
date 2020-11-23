@@ -1,9 +1,10 @@
 package com.deltaww.flowapi.service;
 
-import com.deltaww.flowapi.entity.DeltaPrivilige;
+import com.deltaww.flowapi.entity.DeltaPriviligeEntity;
 
 import java.util.List;
 
 public interface DeltaPrivilligeService {
-    List<DeltaPrivilige> getUserPrivilige(String userId);
+    List<DeltaPriviligeEntity> getUserPrivilige(String userId);
+    List<DeltaPriviligeEntity> getUserButtonPrivilige(String userId, String parentId);
 }

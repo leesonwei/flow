@@ -1,9 +1,9 @@
 flowable:
   mail:
     server:
-      host: deltarelay.deltaww.com
-      port: 25
-      default-from: oa@deltaww.com
+      host: localhost # deltarelay.deltaww.com
+      port: 2525
+      default-from: flowable@deltaww.com
       use-ssl: false
       use-tls: false
 

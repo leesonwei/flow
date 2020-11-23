@@ -11,7 +11,7 @@ public class Constant {
         public static final String TEXT="text";
         public static final String MULTILINETEXT="multi-line-text";
         public static final String DATE_="date";
-        public static final String NUMBER="number";
+        public static final String NUMBER="integer";
         public static final String UPLOAD="upload";
     }
 }

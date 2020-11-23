@@ -133,4 +133,15 @@ $(document).ready(function () {
         return false;
     });
 
+    //流程定义只显示最新版本
+    $("#latest").click(function(){
+        // if ($(this).val() == 'off') {
+        //     $(this).val('on')
+        // } else {
+        //     $(this).val('off')
+        // }
+        // console.log($(this).val())
+        window.location.href = "/deltaflow/processes/" + ($(this).val()=='on'?'on':'off');
+    })
+
 });

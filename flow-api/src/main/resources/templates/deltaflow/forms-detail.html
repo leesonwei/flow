@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bootstrap Dashboard by Bootstrapious.com</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="/flowable/vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="/flowable/vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="/flowable/css/fontastic.css">
+    <!-- Google fonts - Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <!-- jQuery Circle-->
+    <link rel="stylesheet" href="/flowable/css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <!-- Custom Scrollbar-->
+    <link rel="stylesheet" href="/flowable/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="/flowable/css/style.default.css" id="theme-stylesheet">
+    <!-- Timeline stylesheet -->
+    <link rel="stylesheet" href="/flowable/css/timeline.css">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="/flowable/css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="/flowable/img/favicon.ico">
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+  </head>
+  <body>
+    <!-- Side Navbar -->
+    <nav th:include="deltaflow/template::sidebar" class="side-navbar">
+
+    </nav>
+    <div class="page">
+      <!-- navbar-->
+      <header th:include="deltaflow/template::headernav" class="header">
+
+      </header>
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Forms       </li>
+          </ul>
+        </div>
+      </div>
+      <section class="forms">
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">Forms            </h1>
+          </header>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h4 th:text="${form.name}">All form elements</h4>
+                </div>
+                <div class="card-body" th:utext="${formUI}">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h4>核签记录</h4>
+                </div>
+                <div class="card-body">
+                  <div class="tracking-list">
+                    <div class="tracking-item">
+                      <div class="tracking-icon status-intransit">
+                        <svg class="svg-inline--fa fa-circle fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="circle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                          <path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"></path>
+                        </svg>
+                        <!-- <i class="fas fa-circle"></i> -->
+                      </div>
+                      <div class="tracking-date">Aug 10, 2018<span>05:01 PM</span></div>
+                      <div class="tracking-content">DESTROYEDPER SHIPPER INSTRUCTION<span>KUALA LUMPUR (LOGISTICS HUB), MALAYSIA, MALAYSIA</span></div>
+                    </div>
+                    <div class="tracking-item">
+                      <div class="tracking-icon status-intransit">
+                        <svg class="svg-inline--fa fa-circle fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="circle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                          <path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"></path>
+                        </svg>
+                        <!-- <i class="fas fa-circle"></i> -->
+                      </div>
+                      <div class="tracking-date">Aug 10, 2018<span>11:19 AM</span></div>
+                      <div class="tracking-content">SHIPMENT DELAYSHIPPER INSTRUCTION TO DESTROY<span>SHENZHEN, CHINA, PEOPLE'S REPUBLIC</span></div>
+                    </div>
+                    <div class="tracking-item">
+                      <div class="tracking-icon status-inforeceived">
+                        <svg class="svg-inline--fa fa-clipboard-list fa-w-12" aria-hidden="true" data-prefix="fas" data-icon="clipboard-list" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg="">
+                          <path fill="currentColor" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM96 424c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm96-192c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm128 368c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16z"></path>
+                        </svg>
+                        <!-- <i class="fas fa-clipboard-list"></i> -->
+                      </div>
+                      <div class="tracking-date">Jul 06, 2018<span>02:02 PM</span></div>
+                      <div class="tracking-content">Shipment designated to MALAYSIA.<span>HONG KONG, HONGKONG</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer th:include="deltaflow/template::footer" class="main-footer">
+      </footer>
+    </div>
+    <div th:include="deltaflow/template::toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+    <!-- JavaScript files-->
+    <script src="/flowable/vendor/jquery/jquery.min.js"></script>
+    <script src="/flowable/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/flowable/js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="/flowable/vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="/flowable/vendor/chart.js/Chart.min.js"></script>
+    <script src="/flowable/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/flowable/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <!-- Main File-->
+    <script src="/flowable/js/front.js"></script>
+    <script src="/flowable/js/delta-custom.js"></script>
+  </body>
+</html>
