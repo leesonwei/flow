@@ -133,12 +133,6 @@ public class FormController extends BaseController {
         return processInstances;
     }
 
-    /*@GetMapping("/forms/{formId}")
-    public ModelAndView getForm(ModelAndView modelAndView){
-        modelAndView.addObject("currentMenu", "表单中心");
-        modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/form");
-        return modelAndView;
-    }*/
 
     @GetMapping("/forms/{formId}/start")
     public ModelAndView getStartForm(@PathVariable String formId, ModelAndView modelAndView){
@@ -169,6 +163,19 @@ public class FormController extends BaseController {
 
     @GetMapping("/forms/{formId}/audit")
     public ModelAndView auditForm(@PathVariable String formId, ModelAndView modelAndView){
+        Object renderedTaskForm = processEngine.getFormService().getRenderedTaskForm("");
+        FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
+        String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.AUDIT);
+        modelAndView.addObject("form", processDefinitionStartForm);
+        modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
+        modelAndView.addObject("currentMenu", "表单中心");
+        modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
+        return modelAndView;
+    }
+
+    @GetMapping("/forms/{formId}/check")
+    public ModelAndView checkForm(@PathVariable String formId, ModelAndView modelAndView){
+        Object renderedTaskForm = processEngine.getFormService().getRenderedTaskForm("");
         FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
         String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.AUDIT);
         modelAndView.addObject("form", processDefinitionStartForm);

@@ -80,7 +80,6 @@ public class TaskController extends BaseController {
     @ResponseBody
     public String rejectProcessTask(CompleteFormEntity completeFormEntity){
         //modelAndView.setViewName("redirect:/oa/process/task");
-        //todo 添加审批意见
         CommentRepresentation comment = new CommentRepresentation();
         comment.setMessage(completeFormEntity.getComment());
         comment.setCreated(new Date());
@@ -93,12 +92,13 @@ public class TaskController extends BaseController {
                 .createHistoricTaskInstanceQuery().processInstanceId(completeFormEntity.getProcessInstanceId()).orderByHistoricTaskInstanceStartTime().asc().list();
         List<Execution> executions = processEngine.getRuntimeService().createExecutionQuery().parentId(completeFormEntity.getProcessInstanceId()).list();
         executions.forEach(execution -> executionIds.add(execution.getId()));
+        completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
+        completeFormEntity.getValues().put(Constant.AUDIT, "reject");
         Map<String, Object> values = new HashMap<>();
         values.put("outcome" ,completeFormEntity.getOutcome());
         taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);
-        completeFormEntity.getValues().put("firstcommit", false);
+
         taskService.setVariables(completeFormEntity.getTaskId(), completeFormEntity.getValues());
-        //todo 处理子流程,多实例流程
         processEngine.getRuntimeService().createChangeActivityStateBuilder()
                 .moveExecutionsToSingleActivityId(executionIds, taskInstances.get(0).getTaskDefinitionKey())
                 .changeState();
@@ -117,10 +117,12 @@ public class TaskController extends BaseController {
             comment.setId(new UuidIdGenerator().generateId());
             commentService.addTaskComment(comment, completeFormEntity.getTaskId());
         }
+
         Map<String, Object> values = new HashMap<>();
         values.put("outcome" ,completeFormEntity.getOutcome());
         taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);
-        completeFormEntity.getValues().put("firstcommit", false);
+        completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
+        completeFormEntity.getValues().put(Constant.AUDIT, "reject");
         taskFormService.completeTaskForm(completeFormEntity.getTaskId(), completeFormEntity);
         return "success";
     }
