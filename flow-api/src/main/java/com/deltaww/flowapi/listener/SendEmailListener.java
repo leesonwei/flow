@@ -25,8 +25,8 @@ public class SendEmailListener extends AbstractFlowableEngineEventListener {
     private FlowableProperties flowableProperties;
 
     @Override
-    protected void taskAssigned(FlowableEngineEntityEvent event) {
-        //todo 启动发送email流程
+    protected void taskCreated(FlowableEngineEntityEvent event) {
+        //todo 启动发送email流程, 使用flowable的邮件系统,太慢,待更新
         /*Map<String, Object> emailVar = new HashMap<>();
         emailVar.put("emailFrom", "delta@flowable.com");
         emailVar.put("emailTo", "delta@flowable.com");

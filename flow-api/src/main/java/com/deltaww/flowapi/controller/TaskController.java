@@ -3,6 +3,9 @@ package com.deltaww.flowapi.controller;
 import com.deltaww.flowapi.common.Constant;
 import com.deltaww.flowapi.entity.CompleteFormEntity;
 import com.deltaww.flowapi.entity.TaskHistoryEntity;
+import com.deltaww.flowapi.service.DeltaPrivilligeService;
+import com.deltaww.flowapi.service.DeltaUserService;
+import com.deltaww.flowapi.service.impl.DeltaTaskQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.flowable.engine.ProcessEngine;
@@ -10,6 +13,7 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
+import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.ui.common.model.ResultListDataRepresentation;
 import org.flowable.ui.common.repository.UuidIdGenerator;
@@ -35,8 +39,9 @@ import java.util.*;
 public class TaskController extends BaseController {
     @Autowired
     private UserService idmUserService;
+    @Qualifier("deltaTaskQuery")
     @Autowired
-    protected FlowableTaskQueryService taskQueryService;
+    protected DeltaTaskQuery deltaTaskQuery;
     @Qualifier("processEngine")
     @Autowired
     private ProcessEngine processEngine;
@@ -46,64 +51,30 @@ public class TaskController extends BaseController {
     private TaskService taskService;
     @Autowired
     protected FlowableTaskFormService taskFormService;
+    @Autowired
+    private DeltaUserService deltaUserService;
+    @Autowired
+    private DeltaPrivilligeService deltaPrivilligeService;
 
 
     @RequestMapping(value = {"/tasks"})
     public ModelAndView userTask(ModelAndView modelAndView){
-        modelAndView.addObject("currentMenu", "任务中心");
-        modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/tasks");
-        /*ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("sort", "created-desc");
         objectNode.put("page", 0);
         objectNode.put("size", 50);
-        //objectNode.put("assignee", userService.getCurrentUser().getId());
+        objectNode.put("assignment", deltaUserService.getCurrentUser().getId());
         objectNode.put("state", "open");
-        ResultListDataRepresentation resultListDataRepresentation = taskQueryService.listTasks(objectNode);
-        modelAndView.addObject("processTaskList", resultListDataRepresentation.getData());*/
+        objectNode.put("includeProcessInstance", true);
+        ResultListDataRepresentation resultListDataRepresentation = deltaTaskQuery.listTasks(objectNode);
+        modelAndView.addObject("processTaskList", resultListDataRepresentation);
+        modelAndView.addObject("buttons", deltaPrivilligeService.getUserButtonPrivilige(SecurityUtils.getCurrentUserId(), "4"));
+        modelAndView.addObject("currentMenu", "任务中心");
+        modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/tasks");
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/process/{processInstanceId}/history"})
-    @ResponseBody
-    public List<TaskHistoryEntity> historyTask(@PathVariable String processInstanceId){
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("sort", "created-desc");
-        objectNode.put("processInstanceId", processInstanceId);
-        objectNode.put("state", "completed");
-        List<TaskHistoryEntity> historyEntityList = new ArrayList<>();
-        ProcessInstance processInstance = processEngine.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        handleStartForm(processInstance, historyEntityList);
-        ResultListDataRepresentation resultListDataRepresentation = taskQueryService.listTasks(objectNode);
-        List<Comment> commentsForProcessInstance = commentService.getCommentsForProcessInstance(processInstanceId);
-        resultListDataRepresentation.getData().forEach(x -> {
-            handleFollow((TaskRepresentation) x, commentsForProcessInstance, historyEntityList);
-        });
-        return historyEntityList;
-    }
-
-    private void handleStartForm(ProcessInstance processInstance, List<TaskHistoryEntity> historyEntityList){
-        TaskHistoryEntity taskHistoryEntity = new TaskHistoryEntity();
-        taskHistoryEntity.setUser(idmUserService.getUserInformation(processInstance.getStartUserId()));
-        TaskRepresentation task = new TaskRepresentation();
-        task.setCreated(processInstance.getStartTime());
-        task.setName("Start");
-        taskHistoryEntity.setTask(task);
-        historyEntityList.add(taskHistoryEntity);
-    }
-
-    private void handleFollow(TaskRepresentation taskRepresentation, List<Comment> commentsForProcessInstance, List<TaskHistoryEntity> historyEntityList){
-        TaskHistoryEntity taskHistoryEntity = new TaskHistoryEntity();
-        taskHistoryEntity.setUser(idmUserService.getUserInformation(taskRepresentation.getAssignee().getId()));
-        taskHistoryEntity.setTask(taskRepresentation);
-        commentsForProcessInstance.forEach(x -> {
-            if (x.getTaskId().equals(taskRepresentation.getId())) {
-                taskHistoryEntity.setComment(x);
-            }
-        });
-        historyEntityList.add(taskHistoryEntity);
-    }
 
     @PostMapping(value = {"/process/task/reject"})
     @ResponseBody

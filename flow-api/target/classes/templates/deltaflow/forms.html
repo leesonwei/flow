@@ -62,7 +62,7 @@
             <li class="nav-item">
               <a class="nav-link" id="audit-tab" data-toggle="tab" href="#audit" role="tab" aria-controls="audit"
                  aria-selected="false">
-                <h6>待审核</h6>
+                <h6>审核中</h6>
               </a>
             </li>
             <li class="nav-item">
@@ -96,55 +96,38 @@
                     <div class="col-lg-12">
                       <div class="card">
                         <div class="card-header">
-                          <h4>Compact Table</h4>
+                          <h4>审核中表单</h4>
                         </div>
                         <div class="card-body">
                           <div class="table-responsive">
                             <table class="table table-striped table-sm">
                               <thead>
                               <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
+                                <th>操作</th>
+                                <th>Name</th>
+                                <th>StartBy</th>
+                                <th>StartAt</th>
+                                <th>Key</th>
                               </tr>
                               </thead>
                               <tbody>
-                              <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">3</th>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter      </td>
-                              </tr>
-                              <tr>
-                                <th scope="row">4</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">5</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">6</th>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter       </td>
+                              <tr th:each="processInstance : ${runningProcessInstances.data}">
+                                <td scope="row">
+                                  <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      功能
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                      <li th:each="button : ${buttons}">
+                                        <a style="cursor: pointer;" th:data-processid="${processInstance.id}" class="dropdown-item viewProcessGragh" th:text="${button.name}" th:href="${#strings.replace(button.url,'{processInstanceId}',processInstance.id)}">查看流程图</a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </td>
+                                <td th:text="${#strings.abbreviate(processInstance.name,20)}">Mark</td>
+                                <td th:text="${processInstance.startedBy.fullName}">Otto</td>
+                                <td th:text="${#dates.format(processInstance.started, 'yyyy-MM-dd HH:mm')}">@mdo</td>
+                                <td th:text="${processInstance.processDefinitionKey}">@mdo</td>
                               </tr>
                               </tbody>
                             </table>
@@ -163,55 +146,27 @@
                     <div class="col-lg-12">
                       <div class="card">
                         <div class="card-header">
-                          <h4>Compact Table</h4>
+                          <h4>已审核完成表单</h4>
                         </div>
                         <div class="card-body">
                           <div class="table-responsive">
                             <table class="table table-striped table-sm">
                               <thead>
                               <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>StartBy</th>
+                                <th>StartAt</th>
+                                <th>EndAt</th>
                               </tr>
                               </thead>
                               <tbody>
-                              <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">3</th>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter      </td>
-                              </tr>
-                              <tr>
-                                <th scope="row">4</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">5</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">6</th>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter       </td>
+                              <tr th:each="processInstance : ${doneProcessInstances.data}">
+                                <th scope="row" th:text="${#strings.abbreviate(processInstance.id,10)}">1</th>
+                                <td th:text="${#strings.abbreviate(processInstance.name,10)}">Mark</td>
+                                <td th:text="${processInstance.startedBy.fullName}">Otto</td>
+                                <td th:text="${#dates.format(processInstance.started, 'yyyy-MM-dd HH:mm')}">@mdo</td>
+                                <td th:text="${#dates.format(processInstance.ended, 'yyyy-MM-dd HH:mm')}">@mdo</td>
                               </tr>
                               </tbody>
                             </table>

@@ -26,11 +26,98 @@ public class DeltaUserserviceImpl implements DeltaUserService {
     @Override
     public User getManager(User currentUser) {
         String tablename = processEngine.getManagementService().getTableName(MembershipEntity.class);
-        String sql = "select user_id_ from #{tablename} m where m.group_id_ = #{manager}";
+        String sql = "select USER_ID_ from ACT_ID_MEMBERSHIP m where m.GROUP_ID_ = #{manager}";
         User user = processEngine.getIdentityService().createNativeUserQuery().sql(sql)
                 .parameter("tablename", tablename)
                 .parameter("manager", "manager")
                 .singleResult();
+        return user;
+    }
+
+    @Override
+    public User getManager(String userId) {
+        /*User currentUser = processEngine.getIdentityService().createUserQuery().userId(userId).singleResult();
+        String tablename = processEngine.getManagementService().getTableName(MembershipEntity.class);
+        String sql = "select USER_ID_ from ACT_ID_MEMBERSHIP m where m.GROUP_ID_ = #{manager}";
+        User user = processEngine.getManagementService().executeCustomSql()
+                .parameter("manager", "manager")
+                .singleResult();*/
+        User user = new User() {
+            @Override
+            public String getId() {
+                return "manager";
+            }
+
+            @Override
+            public void setId(String s) {
+
+            }
+
+            @Override
+            public String getFirstName() {
+                return null;
+            }
+
+            @Override
+            public void setFirstName(String s) {
+
+            }
+
+            @Override
+            public void setLastName(String s) {
+
+            }
+
+            @Override
+            public String getLastName() {
+                return null;
+            }
+
+            @Override
+            public void setDisplayName(String s) {
+
+            }
+
+            @Override
+            public String getDisplayName() {
+                return null;
+            }
+
+            @Override
+            public void setEmail(String s) {
+
+            }
+
+            @Override
+            public String getEmail() {
+                return null;
+            }
+
+            @Override
+            public String getPassword() {
+                return null;
+            }
+
+            @Override
+            public void setPassword(String s) {
+
+            }
+
+            @Override
+            public String getTenantId() {
+                return null;
+            }
+
+            @Override
+            public void setTenantId(String s) {
+
+            }
+
+            @Override
+            public boolean isPictureSet() {
+                return false;
+            }
+        };
         return user;
     }
 

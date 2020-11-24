@@ -63,14 +63,14 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         privilige2.setLevel(1);
         privilige2.setUrl("/deltaflow/forms");
         deltaPriviligeEntities.add(privilige2);
-        /*DeltaPrivilige privilige3 = new DeltaPrivilige();
-        privilige3.setId("34");
+        DeltaPriviligeEntity privilige3 = new DeltaPriviligeEntity();
+        privilige3.setId("4");
         privilige3.setName("任务中心");
         privilige3.setIcon("icon-form");
         privilige3.setType(0);
         privilige3.setLevel(1);
         privilige3.setUrl("/deltaflow/tasks");
-        deltaPriviliges.add(privilige3);*/
+        deltaPriviligeEntities.add(privilige3);
 
 
         //buttons
@@ -92,6 +92,43 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         button2.setParentId("2");
         button2.setUrl("/deltaflow/process/editor/{processDefinitionId}");
         deltaPriviligeEntities.add(button2);*/
+
+        DeltaPriviligeEntity button21 = new DeltaPriviligeEntity();
+        button21.setId("131");
+        button21.setName("审批");
+        button21.setIcon("icon-form");
+        button21.setType(1);
+        button21.setLevel(2);
+        button21.setParentId("4");
+        button21.setUrl("/#");
+        deltaPriviligeEntities.add(button21);
+        DeltaPriviligeEntity button22 = new DeltaPriviligeEntity();
+        button22.setId("112");
+        button22.setName("取消申请");
+        button22.setIcon("icon-form");
+        button22.setType(1);
+        button22.setLevel(3);
+        button22.setParentId("3");
+        button22.setUrl("/#");
+        deltaPriviligeEntities.add(button22);
+        DeltaPriviligeEntity button24 = new DeltaPriviligeEntity();
+        button24.setId("114");
+        button24.setName("查看进度");
+        button24.setIcon("icon-form");
+        button24.setType(1);
+        button24.setLevel(4);
+        button24.setParentId("3");
+        button24.setUrl("/#");
+        deltaPriviligeEntities.add(button24);
+        DeltaPriviligeEntity button23 = new DeltaPriviligeEntity();
+        button23.setId("113");
+        button23.setName("删除实例");
+        button23.setIcon("icon-form");
+        button23.setType(1);
+        button23.setLevel(1);
+        button23.setParentId("3");
+        button23.setUrl("/#");
+        deltaPriviligeEntities.add(button23);
 
         return deltaPriviligeEntities.stream().sorted(Comparator.comparing(DeltaPriviligeEntity::getId)).collect(Collectors.toList());
     }

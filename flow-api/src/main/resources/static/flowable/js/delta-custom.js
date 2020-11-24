@@ -19,7 +19,10 @@ $(document).ready(function () {
             method: "POST",
             data: json
         }).done(function ( data ) {
-            window.location.href='/deltaflow/forms/#audit';
+            $('.toast').toast('show');
+            setTimeout(function () {
+                window.location.href='/deltaflow/forms/#audit';
+            }, 1000)
         }).fail(function (data) {
             console.log(data);
             $('.toast').toast('show');
