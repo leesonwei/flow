@@ -98,7 +98,8 @@
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                       <li th:each="button : ${buttons}">
-                                        <a style="cursor: pointer;" th:data-processid="${task.id}" class="dropdown-item viewProcessGragh" th:text="${button.name}" th:href="${#strings.replace(button.url,'{task}',task.id)}">查看流程图</a>
+                                        <a style="cursor: pointer;" th:data-processid="${task.id}" class="dropdown-item viewProcessGragh" th:text="${button.name}"
+                                           th:href="${#strings.replace(#strings.replace(button.url,'{taskId}',task.id),'{formId}',task.processInstanceId)}">审批</a>
                                       </li>
                                     </ul>
                                   </div>

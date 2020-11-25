@@ -30,6 +30,7 @@ import org.flowable.ui.task.model.runtime.TaskRepresentation;
 import org.flowable.ui.task.service.runtime.FlowableProcessDefinitionService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceQueryService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceService;
+import org.flowable.ui.task.service.runtime.FlowableTaskFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -66,6 +67,8 @@ public class FormController extends BaseController {
     @Qualifier("deltaTaskQuery")
     @Autowired
     protected DeltaTaskQuery deltaTaskQuery;
+    @Autowired
+    protected FlowableTaskFormService taskFormService;
 
     /**
      * 这里只显示可编辑的form==process
@@ -161,12 +164,12 @@ public class FormController extends BaseController {
         return modelAndView;
     }
 
-    @GetMapping("/forms/{formId}/audit")
-    public ModelAndView auditForm(@PathVariable String formId, ModelAndView modelAndView){
-        Object renderedTaskForm = processEngine.getFormService().getRenderedTaskForm("");
-        FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
-        String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.AUDIT);
-        modelAndView.addObject("form", processDefinitionStartForm);
+    @GetMapping("/forms/{formId}/{taskId}/audit")
+    public ModelAndView auditForm(@PathVariable String formId, @PathVariable String taskId, ModelAndView modelAndView){
+        FormInfo taskForm = taskFormService.getTaskForm(taskId);
+        //FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
+        String formUI = formUIService.renderForm(taskForm, FormState.AUDIT);
+        modelAndView.addObject("form", taskForm);
         modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
@@ -177,7 +180,7 @@ public class FormController extends BaseController {
     public ModelAndView checkForm(@PathVariable String formId, ModelAndView modelAndView){
         Object renderedTaskForm = processEngine.getFormService().getRenderedTaskForm("");
         FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
-        String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.AUDIT);
+        String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.START);
         modelAndView.addObject("form", processDefinitionStartForm);
         modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
         modelAndView.addObject("currentMenu", "表单中心");

@@ -90,22 +90,13 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         //buttons
         DeltaPriviligeEntity button1 = new DeltaPriviligeEntity();
         button1.setId("101");
-        button1.setName("新增流程");
+        button1.setName("新增/编辑流程");
         button1.setIcon("icon-form");
         button1.setType(1);
         button1.setLevel(4);
         button1.setParentId("2");
         button1.setUrl("/modeler/#/processes");
         deltaPriviligeEntities.add(button1);
-        /*DeltaPriviligeEntity button2 = new DeltaPriviligeEntity();
-        button2.setId("102");
-        button2.setName("编辑流程");
-        button2.setIcon("icon-form");
-        button2.setType(1);
-        button2.setLevel(2);
-        button2.setParentId("2");
-        button2.setUrl("/deltaflow/process/editor/{processDefinitionId}");
-        deltaPriviligeEntities.add(button2);*/
 
         DeltaPriviligeEntity button21 = new DeltaPriviligeEntity();
         button21.setId("131");
@@ -114,7 +105,7 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         button21.setType(1);
         button21.setLevel(2);
         button21.setParentId("4");
-        button21.setUrl("/#");
+        button21.setUrl("/deltaflow/forms/{formId}/{taskId}/audit");
         deltaPriviligeEntities.add(button21);
 
         DeltaPriviligeEntity button25 = new DeltaPriviligeEntity();

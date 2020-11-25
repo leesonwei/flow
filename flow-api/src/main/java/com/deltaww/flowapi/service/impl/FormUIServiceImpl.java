@@ -18,23 +18,39 @@ import java.util.List;
 public class FormUIServiceImpl implements FormUIService {
     @Override
     public String renderForm(FormInfo formInfo, FormState formState) {
-        String formContent = getFormContent(formInfo);
+        String formContent = getFormContent(formInfo, formState);
         String formFooter = getFormFooter((SimpleFormModel) formInfo.getFormModel(), formState);
         String formUI = getFormUI(formInfo);
         return formUI.replace("${formContent}", formContent).replace("${formFooter}", formFooter);
     }
 
-    private String getFormContent(FormInfo formInfo) {
+    private String getFormContent(FormInfo formInfo, FormState formState) {
         SimpleFormModel formModel = (SimpleFormModel) formInfo.getFormModel();
         List<FormField> fields = formModel.getFields();
         StringBuilder stringBuilder = new StringBuilder();
+        List<String> noNeedRender = new ArrayList<>();
+        noNeedRender.add(Constant.SKIP_EXPRESSION);
+        noNeedRender.add(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED);
+        noNeedRender.add(Constant.MANAGER);
+        noNeedRender.add(Constant.ASSIGNEE_LIST);
         for (FormField field : fields) {
-            stringBuilder.append(getFieldUI(field));
+            if (!noNeedRender.contains(field.getId())) {
+                stringBuilder.append(getFieldUI(field, formState));
+            }
+        }
+        if (formState.equals(FormState.AUDIT)) {
+            stringBuilder.append("<div class=\"form-group row\">\n" +
+                    "    <label class=\"col-sm-2 form-control-label\">Comment</label>\n" +
+                    "                      <div class=\"col-sm-10\">\n" +
+                    "    <textarea class=\"form-control\" name=\"Comment\" rows=\"3\">" +
+                    "    </textarea>\n" +
+                    "                      </div>\n" +
+                    "  </div>");
         }
         return stringBuilder.toString();
     }
 
-    private String getFieldUI(@Nullable FormField formField) {
+    private String getFieldUI(@Nullable FormField formField, FormState formState) {
         StringBuilder stringBuilder = new StringBuilder();
         switch (formField.getType()){
             case Constant.FieldType.TEXT : {
@@ -73,7 +89,7 @@ public class FormUIServiceImpl implements FormUIService {
         ui = ui.replace("${fieldName}", formField.getName())
                 .replace("${fieldId}", formField.getId())
                 .replace("${fieldValue}", getFieldValue(formField))
-                .replace("${readonly}", formField.isReadOnly()?"readonly":"");
+                .replace("${readonly}", (formField.isReadOnly() || formState.equals(FormState.AUDIT)) ? "readonly":"");
         return ui;
     }
 
@@ -104,7 +120,8 @@ public class FormUIServiceImpl implements FormUIService {
         StringBuilder stringBuilder = new StringBuilder();
         StringBuilder outcomes = new StringBuilder();
         if (formState == FormState.START) {
-
+            outcomes.append("                        <a type=\"button\" href=\"/deltaflow/forms\" class=\"btn btn-secondary\">Cancel</a>\n" +
+                    "                        <a type=\"submit\" class=\"btn btn-primary btn-save\">Save Changes</a>\n");
         } else if (formState == FormState.AUDIT) {
             outcomes.append("<a type=\"submit\" class=\"btn  btn-info btn-agree\">")
                     .append("同意")
@@ -114,9 +131,7 @@ public class FormUIServiceImpl implements FormUIService {
                     .append("</a>\n");
         }
         stringBuilder.append("<div class=\"form-group row\">\n" +
-                "                      <div class=\"col-sm-4 offset-sm-2\">\n" +
-                "                        <a type=\"button\" href=\"/deltaflow/forms\" class=\"btn btn-secondary\">Cancel</a>\n" +
-                "                        <a type=\"submit\" class=\"btn btn-primary btn-save\">Save Changes</a>\n")
+                "                      <div class=\"col-sm-4 offset-sm-2\">\n")
                 .append(outcomes.toString())
                 .append("                      </div>\n")
                 .append("                    </div>\n");

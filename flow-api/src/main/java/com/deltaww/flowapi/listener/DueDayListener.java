@@ -27,7 +27,9 @@ public class DueDayListener extends AbstractFlowableEngineEventListener {
     @Override
     protected void taskCreated(FlowableEngineEntityEvent event){
         TaskEntity entity = (TaskEntity) event.getEntity();
-        entity.setDueDate(Date.from(LocalDateTime.now().plusDays(5).toInstant(ZoneOffset.UTC)));
-        processEngine.getTaskService().saveTask(entity);
+        if (entity.getDueDate() == null) {
+            entity.setDueDate(Date.from(LocalDateTime.now().plusDays(5).toInstant(ZoneOffset.UTC)));
+            processEngine.getTaskService().saveTask(entity);
+        }
     }
 }
