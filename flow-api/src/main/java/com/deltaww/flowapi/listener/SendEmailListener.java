@@ -1,5 +1,6 @@
 package com.deltaww.flowapi.listener;
 
+import com.deltaww.flowapi.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
@@ -23,6 +24,8 @@ public class SendEmailListener extends AbstractFlowableEngineEventListener {
     private ProcessEngine processEngine;
     @Autowired
     private FlowableProperties flowableProperties;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     protected void taskCreated(FlowableEngineEntityEvent event) {
@@ -36,6 +39,6 @@ public class SendEmailListener extends AbstractFlowableEngineEventListener {
         Authentication.setAuthenticatedUserId("admin");
         ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey("send-email", emailVar);
         Authentication.setAuthenticatedUserId(null);*/
-        log.info("send email sucess: {}", event.getProcessInstanceId());
+        emailService.sendEmail();
     }
 }

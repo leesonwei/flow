@@ -32,7 +32,7 @@ public class FormUIServiceImpl implements FormUIService {
         noNeedRender.add(Constant.SKIP_EXPRESSION);
         noNeedRender.add(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED);
         noNeedRender.add(Constant.MANAGER);
-        noNeedRender.add(Constant.ASSIGNEE_LIST);
+        //noNeedRender.add(Constant.ASSIGNEE_LIST);
         for (FormField field : fields) {
             if (!noNeedRender.contains(field.getId())) {
                 stringBuilder.append(getFieldUI(field, formState));
@@ -42,8 +42,8 @@ public class FormUIServiceImpl implements FormUIService {
             stringBuilder.append("<div class=\"form-group row\">\n" +
                     "    <label class=\"col-sm-2 form-control-label\">Comment</label>\n" +
                     "                      <div class=\"col-sm-10\">\n" +
-                    "    <textarea class=\"form-control\" name=\"Comment\" rows=\"3\">" +
-                    "    </textarea>\n" +
+                    "    <textarea class=\"form-control\" name=\"comment\" rows=\"3\">" +
+                    "</textarea>\n" +
                     "                      </div>\n" +
                     "  </div>");
         }
@@ -76,7 +76,7 @@ public class FormUIServiceImpl implements FormUIService {
                         "    <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
                         "    <textarea class=\"form-control\" name=\"${fieldId}\" rows=\"5\" ${readonly}>${fieldValue}" +
-                        "    </textarea>\n" +
+                        "</textarea>\n" +
                         "                      </div>\n" +
                         "  </div>");
                 break;
@@ -94,7 +94,7 @@ public class FormUIServiceImpl implements FormUIService {
     }
 
     private String getFieldValue(FormField formField){
-        return formField.getValue() == null ? "":formField.getValue().toString();
+        return formField.getValue() != null ? formField.getValue().toString() : (formField.getPlaceholder() != null && !formField.getPlaceholder().startsWith("${")) ? formField.getPlaceholder() : "";
     }
 
 
@@ -105,9 +105,11 @@ public class FormUIServiceImpl implements FormUIService {
     private String getFormUI(@Nullable FormInfo formInfo) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<form id=\"flowform\" data-form-key=\"" + formInfo.getKey() + "\"")
-                .append(" action=\"/deltaflow/forms/${processDefinitionId}/start\"")
+                .append(" action=\"${action}\"")
                 .append(" data-process-definition-id=\"${processDefinitionId}\"")
+                .append(" data-process-instance-id=\"${processInstanceId}\"")
                 .append(" data-form-id=\"" + formInfo.getId() + "\"")
+                .append(" data-task-id=\"${taskId}\"")
                 .append(" class=\"form-horizontal\">")
                 .append("<input type=\"text\" name=\"processDefinitionId\" value=\"${processDefinitionId}\" class=\"form-control\" hidden>")
                 .append("${formContent}")
@@ -119,7 +121,7 @@ public class FormUIServiceImpl implements FormUIService {
     private String getFormFooter(SimpleFormModel formModel, FormState formState){
         StringBuilder stringBuilder = new StringBuilder();
         StringBuilder outcomes = new StringBuilder();
-        if (formState == FormState.START) {
+        if (formState == FormState.START || formState == FormState.COMFIRM) {
             outcomes.append("                        <a type=\"button\" href=\"/deltaflow/forms\" class=\"btn btn-secondary\">Cancel</a>\n" +
                     "                        <a type=\"submit\" class=\"btn btn-primary btn-save\">Save Changes</a>\n");
         } else if (formState == FormState.AUDIT) {

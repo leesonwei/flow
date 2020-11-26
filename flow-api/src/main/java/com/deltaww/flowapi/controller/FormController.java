@@ -2,7 +2,9 @@ package com.deltaww.flowapi.controller;
 
 import com.deltaww.flowapi.common.Constant;
 import com.deltaww.flowapi.common.FormState;
+import com.deltaww.flowapi.common.SpringUtils;
 import com.deltaww.flowapi.entity.TaskHistoryEntity;
+import com.deltaww.flowapi.listener.ResolveAssigneeListener;
 import com.deltaww.flowapi.service.DeltaPrivilligeService;
 import com.deltaww.flowapi.service.DeltaUserService;
 import com.deltaww.flowapi.service.FormUIService;
@@ -118,7 +120,7 @@ public class FormController extends BaseController {
         objectNode.put("size", 20);
         objectNode.put("state", "running");
         ResultListDataRepresentation processInstances = processInstanceQueryService.getProcessInstances(objectNode);
-        return processInstances;
+        return filterSelfData(processInstances);
     }
 
     /**
@@ -133,6 +135,13 @@ public class FormController extends BaseController {
         objectNode.put("size", 20);
         objectNode.put("state", "completed");
         ResultListDataRepresentation processInstances = processInstanceQueryService.getProcessInstances(objectNode);
+        return filterSelfData(processInstances);
+    }
+
+    private ResultListDataRepresentation filterSelfData(ResultListDataRepresentation processInstances){
+        List<ProcessInstanceRepresentation> data = (List<ProcessInstanceRepresentation>) processInstances.getData();
+        List<ProcessInstanceRepresentation> collect = data.stream().filter(x -> x.getStartedBy().getId().equals(SecurityUtils.getCurrentUserId())).collect(Collectors.toList());
+        processInstances.setData(collect);
         return processInstances;
     }
 
@@ -142,7 +151,8 @@ public class FormController extends BaseController {
         FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
         String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.START);
         modelAndView.addObject("form", processDefinitionStartForm);
-        modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
+        modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId)
+                .replace("${action}", "/deltaflow/forms/" + formId + "/start"));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
@@ -157,8 +167,6 @@ public class FormController extends BaseController {
         create.getValues().put(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
         create.getValues().put(Constant.SKIP_EXPRESSION, true);
         create.getValues().put(Constant.INITIATOR, SecurityUtils.getCurrentUserId());
-        User manager = deltaUserService.getManager(SecurityUtils.getCurrentUserId());
-        create.getValues().put(Constant.MANAGER, manager.getId());
         ProcessInstanceRepresentation processInstanceRepresentation = processInstanceService.startNewProcessInstance(create);
         log.info("process started: {}", processInstanceRepresentation);
         return modelAndView;
@@ -167,22 +175,24 @@ public class FormController extends BaseController {
     @GetMapping("/forms/{formId}/{taskId}/audit")
     public ModelAndView auditForm(@PathVariable String formId, @PathVariable String taskId, ModelAndView modelAndView){
         FormInfo taskForm = taskFormService.getTaskForm(taskId);
-        //FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
         String formUI = formUIService.renderForm(taskForm, FormState.AUDIT);
         modelAndView.addObject("form", taskForm);
-        modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
+        modelAndView.addObject("formUI", formUI.replace("${processInstanceId}", formId)
+                .replace("${taskId}", taskId)
+                .replace("${action}", "/deltaflow/task/{outcome}}"));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
     }
 
-    @GetMapping("/forms/{formId}/check")
-    public ModelAndView checkForm(@PathVariable String formId, ModelAndView modelAndView){
-        Object renderedTaskForm = processEngine.getFormService().getRenderedTaskForm("");
-        FormInfo processDefinitionStartForm = processDefinitionService.getProcessDefinitionStartForm(formId);
-        String formUI = formUIService.renderForm(processDefinitionStartForm, FormState.START);
-        modelAndView.addObject("form", processDefinitionStartForm);
-        modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId));
+    @GetMapping("/forms/{formId}/{taskId}/check")
+    public ModelAndView checkForm(@PathVariable String formId, @PathVariable String taskId, ModelAndView modelAndView){
+        FormInfo taskForm = taskFormService.getTaskForm(taskId);
+        String formUI = formUIService.renderForm(taskForm, FormState.COMFIRM);
+        modelAndView.addObject("form", taskForm);
+        modelAndView.addObject("formUI", formUI.replace("${processInstanceId}", formId)
+                .replace("${taskId}", taskId)
+                .replace("${action}", "/deltaflow/task/complete"));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;

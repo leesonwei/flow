@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class DeltaUserserviceImpl implements DeltaUserService {
     @Qualifier("processEngine")
@@ -120,6 +124,18 @@ public class DeltaUserserviceImpl implements DeltaUserService {
             }
         };
         return user;
+    }
+
+    @Override
+    public Map<String, String> getMesAssignee(List<String> assignees) {
+        Map<String, String> assigneeList = new HashMap<>(); //manager;COORDINATOR;DEV TL;PSM;MESM;PM
+        assigneeList.put(assignees.get(0), "manager");
+        assigneeList.put(assignees.get(1), "manager");
+        assigneeList.put(assignees.get(2), "manager");
+        assigneeList.put(assignees.get(3), "manager");
+        assigneeList.put(assignees.get(4), "manager");
+        assigneeList.put(assignees.get(5), "manager");
+        return assigneeList;
     }
 
     @Override

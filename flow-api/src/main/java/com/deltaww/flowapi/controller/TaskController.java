@@ -13,6 +13,9 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
+import org.flowable.form.api.FormInfo;
+import org.flowable.form.model.FormField;
+import org.flowable.form.model.SimpleFormModel;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.ui.common.model.ResultListDataRepresentation;
@@ -76,10 +79,10 @@ public class TaskController extends BaseController {
     }
 
 
-    @PostMapping(value = {"/process/task/reject"})
+    @PostMapping(value = {"/task/reject"})
     @ResponseBody
     public String rejectProcessTask(CompleteFormEntity completeFormEntity){
-        //modelAndView.setViewName("redirect:/oa/process/task");
+        //設置備註
         CommentRepresentation comment = new CommentRepresentation();
         comment.setMessage(completeFormEntity.getComment());
         comment.setCreated(new Date());
@@ -87,17 +90,18 @@ public class TaskController extends BaseController {
         comment.setCreatedBy(currentUser.getUserId());
         comment.setId(new UuidIdGenerator().generateId());
         commentService.addTaskComment(comment, completeFormEntity.getTaskId());
+        //回退
         List<String> executionIds = new ArrayList<>();
         List<HistoricTaskInstance> taskInstances = processEngine.getHistoryService()
                 .createHistoricTaskInstanceQuery().processInstanceId(completeFormEntity.getProcessInstanceId()).orderByHistoricTaskInstanceStartTime().asc().list();
         List<Execution> executions = processEngine.getRuntimeService().createExecutionQuery().parentId(completeFormEntity.getProcessInstanceId()).list();
         executions.forEach(execution -> executionIds.add(execution.getId()));
+        FormInfo taskForm = taskFormService.getTaskForm(completeFormEntity.getTaskId());
         completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
-        completeFormEntity.getValues().put(Constant.AUDIT, "reject");
-        Map<String, Object> values = new HashMap<>();
+        setCompleteValues(completeFormEntity, taskForm);
+        /*Map<String, Object> values = new HashMap<>();
         values.put("outcome" ,completeFormEntity.getOutcome());
-        taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);
-
+        taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);*/
         taskService.setVariables(completeFormEntity.getTaskId(), completeFormEntity.getValues());
         processEngine.getRuntimeService().createChangeActivityStateBuilder()
                 .moveExecutionsToSingleActivityId(executionIds, taskInstances.get(0).getTaskDefinitionKey())
@@ -105,9 +109,10 @@ public class TaskController extends BaseController {
         return "success";
     }
 
-    @PostMapping(value = {"/process/task/agree"})
+    @PostMapping(value = {"/task/agree"})
     @ResponseBody
     public String agreeProcessTask(CompleteFormEntity completeFormEntity){
+        completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
         if (!StringUtils.isEmpty(completeFormEntity.getComment())) {
             CommentRepresentation comment = new CommentRepresentation();
             comment.setMessage(completeFormEntity.getComment());
@@ -117,15 +122,38 @@ public class TaskController extends BaseController {
             comment.setId(new UuidIdGenerator().generateId());
             commentService.addTaskComment(comment, completeFormEntity.getTaskId());
         }
-
-        Map<String, Object> values = new HashMap<>();
+        /*Map<String, Object> values = new HashMap<>();
         values.put("outcome" ,completeFormEntity.getOutcome());
-        taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);
-        completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
-        completeFormEntity.getValues().put(Constant.AUDIT, "reject");
+        taskService.setVariablesLocal(completeFormEntity.getTaskId(), values);*/
+        FormInfo taskForm = taskFormService.getTaskForm(completeFormEntity.getTaskId());
+        setCompleteValues(completeFormEntity, taskForm);
         taskFormService.completeTaskForm(completeFormEntity.getTaskId(), completeFormEntity);
         return "success";
     }
 
+    @PostMapping(value = {"/task/complete"})
+    @ResponseBody
+    public String completeProcessTask(CompleteFormEntity completeFormEntity){
+        completeFormEntity.getValues().put(Constant.SKIP_EXPRESSION, false);
+        FormInfo taskForm = taskFormService.getTaskForm(completeFormEntity.getTaskId());
+        setCompleteValues(completeFormEntity, taskForm);
+        taskFormService.completeTaskForm(completeFormEntity.getTaskId(), completeFormEntity);
+        return "success";
+    }
+
+    /**
+     * 把表單沒有改變的值設置到變量中
+     * @param completeFormEntity
+     * @param taskForm
+     */
+    private void setCompleteValues(CompleteFormEntity completeFormEntity, FormInfo taskForm){
+        SimpleFormModel formModel = (SimpleFormModel) taskForm.getFormModel();
+        List<FormField> fields = formModel.getFields();
+        for (FormField field : fields) {
+            if (!completeFormEntity.getValues().containsKey(field.getId())) {
+                completeFormEntity.getValues().put(field.getId(), field.getValue());
+            }
+        }
+    }
 
 }

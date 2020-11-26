@@ -115,7 +115,7 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         button25.setType(1);
         button25.setLevel(2);
         button25.setParentId("4");
-        button25.setUrl("/#");
+        button25.setUrl("/deltaflow/forms/{formId}/{taskId}/check");
         deltaPriviligeEntities.add(button25);
 
         DeltaPriviligeEntity button22 = new DeltaPriviligeEntity();

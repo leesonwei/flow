@@ -8,8 +8,8 @@ public class Constant {
     public static final String MANAGER="manager";
     public static final String ADMIN="admin";
     public static final String USER="user";
-    public static final String AUDIT="audit_result";
     public static final String ASSIGNEE_LIST="assigneeList";
+    public static final String ASSIGNEE_LIST_VAR="assigneeListVar";
 
     public static class FieldType {
         public static final String TEXT="text";
