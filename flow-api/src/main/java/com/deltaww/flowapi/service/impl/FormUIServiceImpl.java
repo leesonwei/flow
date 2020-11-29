@@ -32,9 +32,8 @@ public class FormUIServiceImpl implements FormUIService {
         noNeedRender.add(Constant.SKIP_EXPRESSION);
         noNeedRender.add(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED);
         noNeedRender.add(Constant.MANAGER);
-        //noNeedRender.add(Constant.ASSIGNEE_LIST);
         for (FormField field : fields) {
-            if (!noNeedRender.contains(field.getId())) {
+            if (!noNeedRender.contains(field.getId()) && !field.getId().startsWith(Constant.NO_RENDER)) {
                 stringBuilder.append(getFieldUI(field, formState));
             }
         }
@@ -54,12 +53,18 @@ public class FormUIServiceImpl implements FormUIService {
         StringBuilder stringBuilder = new StringBuilder();
         switch (formField.getType()){
             case Constant.FieldType.TEXT : {
-                stringBuilder.append("<div class=\"form-group row\">\n" +
+                String textUI = "<div class=\"form-group row ${hidden}\">\n" +
                         "                      <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
                         "                        <input type=\"text\" name=\"${fieldId}\" value=\"${fieldValue}\" class=\"form-control\" ${readonly}>\n" +
                         "                      </div>\n" +
-                        "                    </div>");
+                        "                    </div>";
+                if (formField.getId().startsWith(Constant.HIDDEN) || (formState == FormState.AUDIT && formField.getId().startsWith("ASSIGNEE"))) {
+                    textUI = textUI.replace("${hidden}", "hidden");
+                } else {
+                    textUI = textUI.replace("${hidden}", "");
+                }
+                stringBuilder.append(textUI);
                 break;
             }
             case Constant.FieldType.NUMBER : {
@@ -72,13 +77,19 @@ public class FormUIServiceImpl implements FormUIService {
                 break;
             }
             case Constant.FieldType.MULTILINETEXT : {
-                stringBuilder.append("<div class=\"form-group row\">\n" +
+                String textUI = "<div class=\"form-group row ${hidden}\">\n" +
                         "    <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
                         "    <textarea class=\"form-control\" name=\"${fieldId}\" rows=\"5\" ${readonly}>${fieldValue}" +
                         "</textarea>\n" +
                         "                      </div>\n" +
-                        "  </div>");
+                        "  </div>";
+                if (formField.getId().startsWith(Constant.HIDDEN) || (formState == FormState.AUDIT && formField.getId().startsWith("ASSIGNEE"))) {
+                    textUI = textUI.replace("${hidden}", "hidden");
+                } else {
+                    textUI = textUI.replace("${hidden}", "");
+                }
+                stringBuilder.append(textUI);
                 break;
             }
             default: {
@@ -130,13 +141,14 @@ public class FormUIServiceImpl implements FormUIService {
                     .append("</a>\n");
             outcomes.append("<a type=\"submit\" class=\"btn btn-danger btn-reject\">")
                     .append("退回")
-                    .append("</a>\n");
+                    .append("</a>\n")
+                    .append("<a type=\"button\" href=\"/deltaflow/forms\" class=\"btn btn-secondary\">Cancel</a>\n");
         }
         stringBuilder.append("<div class=\"form-group row\">\n" +
-                "                      <div class=\"col-sm-4 offset-sm-2\">\n")
+                "<div class=\"col-sm-4 offset-sm-2\">\n")
                 .append(outcomes.toString())
-                .append("                      </div>\n")
-                .append("                    </div>\n");
+                .append("</div>\n")
+                .append("</div>\n");
         return stringBuilder.toString();
     }
 }

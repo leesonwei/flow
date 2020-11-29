@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="自定义流程表单">
+  <process id="mes-requirement" name="MES需求变更" isExecutable="true">
+    <extensionElements>
+      <flowable:eventListener events="PROCESS_STARTED" class="com.deltaww.flowapi.listener.ResolverAssigneeListener"></flowable:eventListener>
+    </extensionElements>
+    <startEvent id="startEvent1" name="填单" flowable:formKey="mes-requirement" flowable:formFieldValidation="true"></startEvent>
+    <userTask id="sid-33868E85-5876-4712-9136-27C22F40C24D" name="填单人确认" flowable:assignee="$INITIATOR" flowable:formKey="mes-requirement" flowable:formFieldValidation="true" flowable:skipExpression="${_SKIP_}">
+      <extensionElements>
+        <modeler:activiti-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:activiti-idm-initiator>
+      </extensionElements>
+    </userTask>
+    <userTask id="sid-9E02A53C-8F0C-4B08-A7ED-46875520B424" name="提案部门主管" flowable:assignee="${manager}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-9D4E7218-A416-4E13-8129-6902D1CEDBD3" sourceRef="sid-33868E85-5876-4712-9136-27C22F40C24D" targetRef="sid-9E02A53C-8F0C-4B08-A7ED-46875520B424"></sequenceFlow>
+    <userTask id="sid-962F5DA8-4C49-46EC-AC02-75726D74F3BD" name="Coordinator" flowable:assignee="${COORDINATOR}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-3B1C7B5B-E126-4DBE-9960-3332CA8953FC" sourceRef="sid-9E02A53C-8F0C-4B08-A7ED-46875520B424" targetRef="sid-962F5DA8-4C49-46EC-AC02-75726D74F3BD"></sequenceFlow>
+    <userTask id="sid-712F5FB9-B139-4A54-B5F0-0C9963B866D6" name="DEV TL" flowable:assignee="${DEV TL}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-75B89205-F7AD-4B61-9772-F69F67FC5A4B" sourceRef="sid-962F5DA8-4C49-46EC-AC02-75726D74F3BD" targetRef="sid-712F5FB9-B139-4A54-B5F0-0C9963B866D6"></sequenceFlow>
+    <userTask id="sid-1B1D89A5-C026-4A31-927F-32BD7888BD59" name="PSM" flowable:assignee="${PSM}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <userTask id="sid-A57DF6D0-FE5C-4D32-B8EC-ECEA13271C76" name="MESM" flowable:assignee="${MESM}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-6F9F2036-70B8-4F2E-AF81-4B54AA19CD43" sourceRef="sid-1B1D89A5-C026-4A31-927F-32BD7888BD59" targetRef="sid-A57DF6D0-FE5C-4D32-B8EC-ECEA13271C76"></sequenceFlow>
+    <userTask id="sid-18F650C5-F8DF-4D17-AD0B-FCCB1F242C4D" name="PM" flowable:assignee="${PM}" flowable:formKey="mes-requirement" flowable:formFieldValidation="true">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-C4E02C10-B6FB-47DF-8F9F-346B5D75275C" sourceRef="sid-A57DF6D0-FE5C-4D32-B8EC-ECEA13271C76" targetRef="sid-18F650C5-F8DF-4D17-AD0B-FCCB1F242C4D"></sequenceFlow>
+    <sequenceFlow id="sid-2090AF02-C11C-4993-9CC4-F4D95E4F6C72" sourceRef="sid-712F5FB9-B139-4A54-B5F0-0C9963B866D6" targetRef="sid-1B1D89A5-C026-4A31-927F-32BD7888BD59"></sequenceFlow>
+    <endEvent id="sid-4C4E0E45-0E10-40C1-A1A5-B4BC491F8E1E" name="结束"></endEvent>
+    <sequenceFlow id="sid-19C22622-BF57-43FF-BE8C-D74EDD41782F" sourceRef="sid-18F650C5-F8DF-4D17-AD0B-FCCB1F242C4D" targetRef="sid-4C4E0E45-0E10-40C1-A1A5-B4BC491F8E1E"></sequenceFlow>
+    <sequenceFlow id="sid-07BACF0C-406A-4E40-A1FC-00A0BC020C59" sourceRef="startEvent1" targetRef="sid-33868E85-5876-4712-9136-27C22F40C24D"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_mes-requirement">
+    <bpmndi:BPMNPlane bpmnElement="mes-requirement" id="BPMNPlane_mes-requirement">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-33868E85-5876-4712-9136-27C22F40C24D" id="BPMNShape_sid-33868E85-5876-4712-9136-27C22F40C24D">
+        <omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-9E02A53C-8F0C-4B08-A7ED-46875520B424" id="BPMNShape_sid-9E02A53C-8F0C-4B08-A7ED-46875520B424">
+        <omgdc:Bounds height="80.0" width="100.0" x="320.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-962F5DA8-4C49-46EC-AC02-75726D74F3BD" id="BPMNShape_sid-962F5DA8-4C49-46EC-AC02-75726D74F3BD">
+        <omgdc:Bounds height="80.0" width="100.0" x="465.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-712F5FB9-B139-4A54-B5F0-0C9963B866D6" id="BPMNShape_sid-712F5FB9-B139-4A54-B5F0-0C9963B866D6">
+        <omgdc:Bounds height="80.0" width="100.0" x="610.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-1B1D89A5-C026-4A31-927F-32BD7888BD59" id="BPMNShape_sid-1B1D89A5-C026-4A31-927F-32BD7888BD59">
+        <omgdc:Bounds height="80.0" width="100.0" x="175.0" y="255.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A57DF6D0-FE5C-4D32-B8EC-ECEA13271C76" id="BPMNShape_sid-A57DF6D0-FE5C-4D32-B8EC-ECEA13271C76">
+        <omgdc:Bounds height="80.0" width="100.0" x="320.0" y="255.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-18F650C5-F8DF-4D17-AD0B-FCCB1F242C4D" id="BPMNShape_sid-18F650C5-F8DF-4D17-AD0B-FCCB1F242C4D">
+        <omgdc:Bounds height="80.0" width="100.0" x="465.0" y="255.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4C4E0E45-0E10-40C1-A1A5-B4BC491F8E1E" id="BPMNShape_sid-4C4E0E45-0E10-40C1-A1A5-B4BC491F8E1E">
+        <omgdc:Bounds height="28.0" width="28.0" x="610.0" y="281.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-07BACF0C-406A-4E40-A1FC-00A0BC020C59" id="BPMNEdge_sid-07BACF0C-406A-4E40-A1FC-00A0BC020C59">
+        <omgdi:waypoint x="129.9499984899576" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="174.9999999999917" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C4E02C10-B6FB-47DF-8F9F-346B5D75275C" id="BPMNEdge_sid-C4E02C10-B6FB-47DF-8F9F-346B5D75275C">
+        <omgdi:waypoint x="419.94999999990824" y="295.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.9999999999807" y="295.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2090AF02-C11C-4993-9CC4-F4D95E4F6C72" id="BPMNEdge_sid-2090AF02-C11C-4993-9CC4-F4D95E4F6C72">
+        <omgdi:waypoint x="660.0" y="217.95000000000002"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="234.99999999999994"></omgdi:waypoint>
+        <omgdi:waypoint x="225.0" y="234.99999999999994"></omgdi:waypoint>
+        <omgdi:waypoint x="225.0" y="255.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3B1C7B5B-E126-4DBE-9960-3332CA8953FC" id="BPMNEdge_sid-3B1C7B5B-E126-4DBE-9960-3332CA8953FC">
+        <omgdi:waypoint x="419.94999999999067" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.9999999999807" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-75B89205-F7AD-4B61-9772-F69F67FC5A4B" id="BPMNEdge_sid-75B89205-F7AD-4B61-9772-F69F67FC5A4B">
+        <omgdi:waypoint x="564.9499999999907" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="609.9999999999807" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9D4E7218-A416-4E13-8129-6902D1CEDBD3" id="BPMNEdge_sid-9D4E7218-A416-4E13-8129-6902D1CEDBD3">
+        <omgdi:waypoint x="274.9499999999907" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="319.9999999999807" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-6F9F2036-70B8-4F2E-AF81-4B54AA19CD43" id="BPMNEdge_sid-6F9F2036-70B8-4F2E-AF81-4B54AA19CD43">
+        <omgdi:waypoint x="274.94999999974334" y="295.0"></omgdi:waypoint>
+        <omgdi:waypoint x="319.9999999999807" y="295.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-19C22622-BF57-43FF-BE8C-D74EDD41782F" id="BPMNEdge_sid-19C22622-BF57-43FF-BE8C-D74EDD41782F">
+        <omgdi:waypoint x="564.95" y="295.0"></omgdi:waypoint>
+        <omgdi:waypoint x="610.0" y="295.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

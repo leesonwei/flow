@@ -4,7 +4,6 @@ import com.deltaww.flowapi.common.Constant;
 import com.deltaww.flowapi.common.FormState;
 import com.deltaww.flowapi.common.SpringUtils;
 import com.deltaww.flowapi.entity.TaskHistoryEntity;
-import com.deltaww.flowapi.listener.ResolveAssigneeListener;
 import com.deltaww.flowapi.service.DeltaPrivilligeService;
 import com.deltaww.flowapi.service.DeltaUserService;
 import com.deltaww.flowapi.service.FormUIService;
@@ -162,8 +161,8 @@ public class FormController extends BaseController {
     public ModelAndView startWithForm(@PathVariable String formId, CreateProcessInstanceRepresentation create, ModelAndView modelAndView){
         modelAndView.setViewName("redirect:/deltaflow/forms/#audit");
         ProcessDefinition processDefinition = processEngine.getRepositoryService().createProcessDefinitionQuery().processDefinitionId(formId).singleResult();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy MM dd");
-        create.setName(processDefinition.getName() + "-" + simpleDateFormat.format(new Date()));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        create.setName(processDefinition.getName() + " " + simpleDateFormat.format(new Date()));
         create.getValues().put(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
         create.getValues().put(Constant.SKIP_EXPRESSION, true);
         create.getValues().put(Constant.INITIATOR, SecurityUtils.getCurrentUserId());
