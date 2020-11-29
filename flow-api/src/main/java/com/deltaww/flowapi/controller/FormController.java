@@ -152,6 +152,7 @@ public class FormController extends BaseController {
         modelAndView.addObject("form", processDefinitionStartForm);
         modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId)
                 .replace("${action}", "/deltaflow/forms/" + formId + "/start"));
+        modelAndView.addObject("historyTasks", historyTasks(formId));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
@@ -179,6 +180,7 @@ public class FormController extends BaseController {
         modelAndView.addObject("formUI", formUI.replace("${processInstanceId}", formId)
                 .replace("${taskId}", taskId)
                 .replace("${action}", "/deltaflow/task/{outcome}}"));
+        modelAndView.addObject("historyTasks", historyTasks(formId));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
@@ -192,13 +194,14 @@ public class FormController extends BaseController {
         modelAndView.addObject("formUI", formUI.replace("${processInstanceId}", formId)
                 .replace("${taskId}", taskId)
                 .replace("${action}", "/deltaflow/task/complete"));
+        modelAndView.addObject("historyTasks", historyTasks(formId));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
     }
 
     @GetMapping(value = {"/forms/{formId}/history"})
-    public List<TaskHistoryEntity> historyTask(@PathVariable String processInstanceId){
+    public List<TaskHistoryEntity> historyTasks(@PathVariable String processInstanceId){
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("sort", "created-desc");

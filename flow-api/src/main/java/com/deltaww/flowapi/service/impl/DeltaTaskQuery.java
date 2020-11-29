@@ -1,5 +1,6 @@
 package com.deltaww.flowapi.service.impl;
 
+import com.deltaww.flowapi.entity.HistoryTaskInfo;
 import com.deltaww.flowapi.entity.TaskHistoryEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -186,6 +187,15 @@ public class DeltaTaskQuery extends FlowableTaskQueryService {
         resultListDataRepresentation.getData().forEach(x -> {
             handleFollow((TaskRepresentation) x, commentsForProcessInstance, historyEntityList);
         });
+        List<HistoryTaskInfo> historyTaskInfos = new ArrayList<>();
+        for (TaskHistoryEntity taskHistoryEntity : historyEntityList) {
+            historyTaskInfos.add(new HistoryTaskInfo(taskHistoryEntity.getTask().getEndDate(),
+                    String.format("s% s% s% 您的 s%", taskHistoryEntity.getUser().getUser().getFirstName(),
+                            taskHistoryEntity.getUser().getUser().getLastName(),
+                            taskHistoryEntity.getValues().get("outcome"),
+                            taskHistoryEntity.getTask().getProcessInstanceName()),
+                            "审核意见：" + taskHistoryEntity.getComment().getFullMessage(), "/"));
+        }
         return historyEntityList;
     }
 
