@@ -1,10 +1,12 @@
 package com.deltaww.flowapi.service.impl;
 
+import com.deltaww.flowapi.common.Constant;
 import com.deltaww.flowapi.entity.HistoryTaskInfo;
 import com.deltaww.flowapi.entity.TaskHistoryEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.flowable.app.api.repository.AppDefinition;
 import org.flowable.app.api.repository.AppDefinitionQuery;
 import org.flowable.cmmn.api.repository.CmmnDeployment;
@@ -14,10 +16,14 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
+import org.flowable.idm.api.User;
+import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.TaskInfoQueryWrapper;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.ui.common.model.ResultListDataRepresentation;
+import org.flowable.ui.common.model.UserRepresentation;
 import org.flowable.ui.common.security.SecurityScope;
 import org.flowable.ui.common.security.SecurityUtils;
 import org.flowable.ui.common.service.exception.BadRequestException;
@@ -25,13 +31,17 @@ import org.flowable.ui.idm.service.UserService;
 import org.flowable.ui.task.model.runtime.TaskRepresentation;
 import org.flowable.ui.task.service.runtime.FlowableCommentService;
 import org.flowable.ui.task.service.runtime.FlowableTaskQueryService;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@Slf4j
 @Primary
 @Service("deltaTaskQuery")
 public class DeltaTaskQuery extends FlowableTaskQueryService {
@@ -177,47 +187,56 @@ public class DeltaTaskQuery extends FlowableTaskQueryService {
 
     }
 
-    public List<TaskHistoryEntity> listHistoryTasks(ObjectNode requestNode){
+    public List<HistoryTaskInfo> listHistoryTasks(ObjectNode requestNode){
         String processInstanceId = requestNode.get("processInstanceId").textValue();
-        List<TaskHistoryEntity> historyEntityList = new ArrayList<>();
+        List<HistoryTaskInfo> historyTaskInfoList = new ArrayList<>();
         ProcessInstance processInstance = processEngine.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        handleStartForm(processInstance, historyEntityList);
+        handleStartForm(processInstance, historyTaskInfoList);
         ResultListDataRepresentation resultListDataRepresentation = this.listTasks(requestNode);
         List<Comment> commentsForProcessInstance = commentService.getCommentsForProcessInstance(processInstanceId);
         resultListDataRepresentation.getData().forEach(x -> {
-            handleFollow((TaskRepresentation) x, commentsForProcessInstance, historyEntityList);
+            handleFollow(processInstance, (TaskRepresentation) x, commentsForProcessInstance, historyTaskInfoList);
         });
-        List<HistoryTaskInfo> historyTaskInfos = new ArrayList<>();
-        for (TaskHistoryEntity taskHistoryEntity : historyEntityList) {
-            historyTaskInfos.add(new HistoryTaskInfo(taskHistoryEntity.getTask().getEndDate(),
-                    String.format("s% s% s% 您的 s%", taskHistoryEntity.getUser().getUser().getFirstName(),
-                            taskHistoryEntity.getUser().getUser().getLastName(),
-                            taskHistoryEntity.getValues().get("outcome"),
-                            taskHistoryEntity.getTask().getProcessInstanceName()),
-                            "审核意见：" + taskHistoryEntity.getComment().getFullMessage(), "/"));
+        List<HistoryTaskInfo> historyTaskInfos = historyTaskInfoList.stream().sorted(Comparator.comparing(HistoryTaskInfo::getEndDate).reversed()).collect(Collectors.toList());
+        return historyTaskInfos;
+    }
+
+    private void handleStartForm(ProcessInstance processInstance, List<HistoryTaskInfo> historyTaskInfos){
+        HistoryTaskInfo historyTaskInfo = new HistoryTaskInfo();
+        historyTaskInfo.setEndDate(processInstance.getStartTime());
+        String operationInfo = "%s started %s";
+        User user = idmUserService.getUserInformation(processInstance.getStartUserId()).getUser();
+        String userName = user.getFirstName() + " " + user.getLastName();
+        if (SecurityUtils.getCurrentUserId().equals(processInstance.getStartUserId())) {
+            userName = "您";
         }
-        return historyEntityList;
+        historyTaskInfo.setOperationInfo(String.format(operationInfo, userName, processInstance.getName()));
+        historyTaskInfos.add(historyTaskInfo);
     }
 
-    private void handleStartForm(ProcessInstance processInstance, List<TaskHistoryEntity> historyEntityList){
-        TaskHistoryEntity taskHistoryEntity = new TaskHistoryEntity();
-        taskHistoryEntity.setUser(idmUserService.getUserInformation(processInstance.getStartUserId()));
-        TaskRepresentation task = new TaskRepresentation();
-        task.setCreated(processInstance.getStartTime());
-        task.setName("Start");
-        taskHistoryEntity.setTask(task);
-        historyEntityList.add(taskHistoryEntity);
-    }
-
-    private void handleFollow(TaskRepresentation taskRepresentation, List<Comment> commentsForProcessInstance, List<TaskHistoryEntity> historyEntityList){
-        TaskHistoryEntity taskHistoryEntity = new TaskHistoryEntity();
-        taskHistoryEntity.setUser(idmUserService.getUserInformation(taskRepresentation.getAssignee().getId()));
-        taskHistoryEntity.setTask(taskRepresentation);
-        commentsForProcessInstance.forEach(x -> {
-            if (x.getTaskId().equals(taskRepresentation.getId())) {
-                taskHistoryEntity.setComment(x);
-            }
-        });
-        historyEntityList.add(taskHistoryEntity);
+    private void handleFollow(ProcessInstance processInstance, TaskRepresentation taskRepresentation, List<Comment> commentsForProcessInstance, List<HistoryTaskInfo> historyTaskInfos){
+        UserRepresentation assignee = taskRepresentation.getAssignee();
+        if (assignee == null) {
+            return;
+        }
+        HistoryTaskInfo historyTaskInfo = new HistoryTaskInfo();
+        historyTaskInfo.setEndDate(taskRepresentation.getEndDate());
+        String userName = assignee.getFirstName() + " " + assignee.getLastName();
+        if (assignee.getId().equals(SecurityUtils.getCurrentUserId())) {
+            userName = "您";
+        }
+        String operationInfo = "%s %s %s " + processInstance.getName();
+        HistoricVariableInstance historicVariableInstance = processEngine.getHistoryService().createHistoricVariableInstanceQuery().taskId(taskRepresentation.getId()).variableName(Constant.OUTCOME).singleResult();
+        if (historicVariableInstance != null) {
+            historyTaskInfo.setOperationInfo(String.format(operationInfo, userName, "<Strong>" + historicVariableInstance.getValue().toString().toUpperCase() + "</Strong>", SecurityUtils.getCurrentUserId().equals(processInstance.getStartUserId())? "您的" : ""));
+        } else {
+            historyTaskInfo.setOperationInfo(String.format(operationInfo, userName, "completed", SecurityUtils.getCurrentUserId().equals(processInstance.getStartUserId()) ? "您的" : ""));
+        }
+        List<Comment> comments = commentsForProcessInstance.stream().filter(x -> x.getTaskId().equals(taskRepresentation.getId())).collect(Collectors.toList());
+        String commentInfo="Comment: %s";
+        if (comments.size() > 0) {
+            historyTaskInfo.setCommentInfo(String.format(commentInfo, comments.get(0).getFullMessage()));
+        }
+        historyTaskInfos.add(historyTaskInfo);
     }
 }

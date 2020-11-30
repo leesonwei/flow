@@ -12,6 +12,8 @@ public class Constant {
 
     public static final String THEMYLEAF_PREFIX="deltaflow";
 
+    public static final String OUTCOME="outcome";
+
     public static final String INITIATOR="initiator";
     public static final String MANAGER="manager";
     public static final String ADMIN="admin";
@@ -34,6 +36,8 @@ public class Constant {
         public static final String TEXT="text";
         public static final String MULTILINETEXT="multi-line-text";
         public static final String DATE_="date";
+        public static final String RADIO_BUTTONS = "radio-buttons";
+        public static final String DROPDOWN = "dropdown";
         public static final String NUMBER="integer";
         public static final String UPLOAD="upload";
     }

@@ -103,7 +103,7 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         button21.setName("审批");
         button21.setIcon("icon-form");
         button21.setType(1);
-        button21.setLevel(2);
+        button21.setLevel(3);
         button21.setParentId("4");
         button21.setUrl("/deltaflow/forms/{formId}/{taskId}/audit");
         deltaPriviligeEntities.add(button21);
@@ -141,7 +141,7 @@ public class DeltaPriviligeServiceImpl implements DeltaPrivilligeService {
         button23.setName("删除实例");
         button23.setIcon("icon-form");
         button23.setType(1);
-        button23.setLevel(4);
+        button23.setLevel(5);
         button23.setParentId("3");
         button23.setUrl("/#");
         deltaPriviligeEntities.add(button23);

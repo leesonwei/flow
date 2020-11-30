@@ -1,9 +1,9 @@
 server:
-  port: 8042
+  port: 8032
 
 spring:
   profiles:
-    active: flowable,email,home
+    active: flowable,email,dev
   main:
     allow-bean-definition-overriding: true
   thymeleaf:

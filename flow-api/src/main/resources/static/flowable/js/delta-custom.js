@@ -53,6 +53,10 @@ $(document).ready(function () {
             data[item.name] = item.value;
         });
         json.values = data;
+        if (json.outcome === 'reject' && json.comment === undefined) {
+            $('.toast').toast('show');
+            return;
+        }
         $.ajax({
             url: action,
             method: 'POST',

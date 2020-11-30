@@ -52,7 +52,7 @@ public class ResolverAssigneeListener extends AbstractFlowableEngineEventListene
         String[] split = assigneeList.split("\n");
         for (int i = 0; i < stringList.size(); i++) {
             if (i < split.length) {
-                assignee.put(stringList.get(0), split[0].split(":")[1]);
+                assignee.put(stringList.get(0).trim(), split[0].split(":")[1].trim());
             }
         }
         return assignee;

@@ -6,8 +6,11 @@ import com.deltaww.flowapi.service.FormUIService;
 import org.flowable.form.api.FormInfo;
 import org.flowable.form.api.FormModel;
 import org.flowable.form.model.FormField;
+import org.flowable.form.model.Option;
+import org.flowable.form.model.OptionFormField;
 import org.flowable.form.model.SimpleFormModel;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -32,6 +35,10 @@ public class FormUIServiceImpl implements FormUIService {
         noNeedRender.add(Constant.SKIP_EXPRESSION);
         noNeedRender.add(Constant.FLOWABLE_SKIP_EXPRESSION_ENABLED);
         noNeedRender.add(Constant.MANAGER);
+        if (formState == FormState.AUDIT) {
+            noNeedRender.add(Constant.ASSIGNEE_LIST_VAR);
+            noNeedRender.add(Constant.ASSIGNEE_LIST);
+        }
         for (FormField field : fields) {
             if (!noNeedRender.contains(field.getId()) && !field.getId().startsWith(Constant.NO_RENDER)) {
                 stringBuilder.append(getFieldUI(field, formState));
@@ -56,7 +63,7 @@ public class FormUIServiceImpl implements FormUIService {
                 String textUI = "<div class=\"form-group row ${hidden}\">\n" +
                         "                      <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
-                        "                        <input type=\"text\" name=\"${fieldId}\" value=\"${fieldValue}\" class=\"form-control\" ${readonly}>\n" +
+                        "                        <input type=\"text\" name=\"${fieldId}\" value=\"${fieldValue}\"  placeholder=\"${placeholder}\" class=\"form-control\" ${readonly}>\n" +
                         "                      </div>\n" +
                         "                    </div>";
                 if (formField.getId().startsWith(Constant.HIDDEN) || (formState == FormState.AUDIT && formField.getId().startsWith("ASSIGNEE"))) {
@@ -71,16 +78,48 @@ public class FormUIServiceImpl implements FormUIService {
                 stringBuilder.append("<div class=\"form-group row\">\n" +
                         "                      <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
-                        "                        <input type=\"number\" name=\"${fieldId}\" value=\"${fieldValue}\" class=\"form-control\" ${readonly}>\n" +
+                        "                        <input type=\"number\" name=\"${fieldId}\" value=\"${fieldValue}\"  placeholder=\"${placeholder}\" class=\"form-control\" ${readonly}>\n" +
                         "                      </div>\n" +
                         "                    </div>");
+                break;
+            }
+            case Constant.FieldType.DROPDOWN : {
+                stringBuilder.append("<div class=\"form-group row\">\n" +
+                        "<label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
+                        "<div class=\"col-sm-10 mb-3\">\n" +
+                        "<select name=\"${fieldId}\" class=\"form-control\" ${readonly}>\n");
+                OptionFormField optionFormField = (OptionFormField) formField;
+                for (Option option : optionFormField.getOptions()) {
+                    stringBuilder.append("<option value=\"" + option.getName() + "\" " + (option.getName().equals(optionFormField.getValue()) ? " selected":" ") + ">");
+                    stringBuilder.append(option.getName());
+                    stringBuilder.append("</option>");
+                }
+                stringBuilder.append("</select>\n" +
+                        "</div>\n" +
+                        "</div>");
+                break;
+            }
+            case Constant.FieldType.RADIO_BUTTONS : {
+                OptionFormField optionFormField = (OptionFormField) formField;
+                stringBuilder.append("<div class=\"form-group row\">\n" +
+                        "                <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
+                        "                <div class=\"col-sm-10\">\n");
+                for (Option option : optionFormField.getOptions()) {
+                    stringBuilder.append("<div class=\"form-check form-check-inline\">\n");
+                    stringBuilder.append("<input class=\"form-check-input\" name=\"${fieldId}\" id=\"" + option.getName()
+                            + "\" type=\"radio\" value=\"" + option.getName() + "\" " + (option.getName().equals(optionFormField.getValue())? " checked":"") + ">");
+                    stringBuilder.append("<label class=\"form-check-label\" for=\"" + option.getName() + "\">" + option.getName() + "</label>");
+                    stringBuilder.append("</div>");
+                }
+                stringBuilder.append("</div>\n" +
+                        "            </div>");
                 break;
             }
             case Constant.FieldType.MULTILINETEXT : {
                 String textUI = "<div class=\"form-group row ${hidden}\">\n" +
                         "    <label class=\"col-sm-2 form-control-label\">${fieldName}</label>\n" +
                         "                      <div class=\"col-sm-10\">\n" +
-                        "    <textarea class=\"form-control\" name=\"${fieldId}\" rows=\"5\" ${readonly}>${fieldValue}" +
+                        "    <textarea class=\"form-control\" name=\"${fieldId}\" rows=\"5\" placeholder=\"${placeholder}\" ${readonly}>${fieldValue}" +
                         "</textarea>\n" +
                         "                      </div>\n" +
                         "  </div>";
@@ -100,12 +139,21 @@ public class FormUIServiceImpl implements FormUIService {
         ui = ui.replace("${fieldName}", formField.getName())
                 .replace("${fieldId}", formField.getId())
                 .replace("${fieldValue}", getFieldValue(formField))
+                .replace("${placeholder}", getFieldPlaceholder(formField))
                 .replace("${readonly}", (formField.isReadOnly() || formState.equals(FormState.AUDIT)) ? "readonly":"");
         return ui;
     }
 
     private String getFieldValue(FormField formField){
-        return formField.getValue() != null ? formField.getValue().toString() : (formField.getPlaceholder() != null && !formField.getPlaceholder().startsWith("${")) ? formField.getPlaceholder() : "";
+        String value = formField.getValue() != null ? formField.getValue().toString() : "";
+        if (!StringUtils.hasLength(value) && formField.isReadOnly() && formField.getPlaceholder() != null) {
+            value = formField.getPlaceholder();
+        }
+        return value;
+    }
+
+    private String getFieldPlaceholder(FormField formField){
+        return (formField.getPlaceholder() != null && !formField.getPlaceholder().startsWith("${")) ? formField.getPlaceholder() : "";
     }
 
 

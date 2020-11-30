@@ -83,8 +83,8 @@
                         </svg>
                         <!-- <i class="fas fa-circle"></i> -->
                       </div>
-                      <div class="tracking-date"><div th:text="${#date.format(task.endDate, 'yyyy-mm-dd')}"></div><span th:text="${#date.format(task.endDate, 'hh:mm:ss')}">05:01 PM</span></div>
-                      <div class="tracking-content"><div th:text="${operationInfo}">manager 同意了你的申请单()</div><span th:text="${commentInfo}">審批意見:111111111111</span></div>
+                      <div class="tracking-date"><div th:text="${#dates.format(task.endDate, 'yyyy-mm-dd')}"></div><span th:text="${#dates.format(task.endDate, 'hh:mm:ss')}">05:01 PM</span></div>
+                      <div class="tracking-content"><div th:utext="${task.operationInfo}">manager 同意了你的申请单()</div><span th:text="${task.commentInfo}">審批意見:111111111111</span></div>
                     </div>
                   </div>
                 </div>

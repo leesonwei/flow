@@ -2,8 +2,7 @@ package com.deltaww.flowapi.controller;
 
 import com.deltaww.flowapi.common.Constant;
 import com.deltaww.flowapi.common.FormState;
-import com.deltaww.flowapi.common.SpringUtils;
-import com.deltaww.flowapi.entity.TaskHistoryEntity;
+import com.deltaww.flowapi.entity.HistoryTaskInfo;
 import com.deltaww.flowapi.service.DeltaPrivilligeService;
 import com.deltaww.flowapi.service.DeltaUserService;
 import com.deltaww.flowapi.service.FormUIService;
@@ -11,23 +10,15 @@ import com.deltaww.flowapi.service.impl.DeltaTaskQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.task.Comment;
-import org.flowable.form.api.FormDefinition;
 import org.flowable.form.api.FormInfo;
-import org.flowable.form.api.FormModel;
 import org.flowable.form.engine.FormEngine;
-import org.flowable.idm.api.User;
 import org.flowable.ui.common.model.ResultListDataRepresentation;
-import org.flowable.ui.common.model.UserRepresentation;
 import org.flowable.ui.common.security.SecurityUtils;
 import org.flowable.ui.task.model.runtime.CreateProcessInstanceRepresentation;
 import org.flowable.ui.task.model.runtime.ProcessDefinitionRepresentation;
 import org.flowable.ui.task.model.runtime.ProcessInstanceRepresentation;
-import org.flowable.ui.task.model.runtime.TaskRepresentation;
 import org.flowable.ui.task.service.runtime.FlowableProcessDefinitionService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceQueryService;
 import org.flowable.ui.task.service.runtime.FlowableProcessInstanceService;
@@ -38,7 +29,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.search.SearchTerm;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -78,7 +68,6 @@ public class FormController extends BaseController {
      */
     @GetMapping("/forms")
     public ModelAndView processIndex(ModelAndView modelAndView){
-
         Map<String, List<ProcessDefinitionRepresentation>> formsMap = getForms();
         modelAndView.addObject("forms", formsMap);
         modelAndView.addObject("runningProcessInstances", getRunningProcessInstance());
@@ -152,7 +141,6 @@ public class FormController extends BaseController {
         modelAndView.addObject("form", processDefinitionStartForm);
         modelAndView.addObject("formUI", formUI.replace("${processDefinitionId}", formId)
                 .replace("${action}", "/deltaflow/forms/" + formId + "/start"));
-        modelAndView.addObject("historyTasks", historyTasks(formId));
         modelAndView.addObject("currentMenu", "表单中心");
         modelAndView.setViewName(Constant.THEMYLEAF_PREFIX + "/forms-detail");
         return modelAndView;
@@ -201,7 +189,7 @@ public class FormController extends BaseController {
     }
 
     @GetMapping(value = {"/forms/{formId}/history"})
-    public List<TaskHistoryEntity> historyTasks(@PathVariable String processInstanceId){
+    public List<HistoryTaskInfo> historyTasks(@PathVariable String processInstanceId){
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("sort", "created-desc");

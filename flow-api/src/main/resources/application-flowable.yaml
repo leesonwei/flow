@@ -5,7 +5,7 @@ flowable:
   rest-api-enabled: true
   common:
     app:
-      idm-url: http://localhost:8031/oaflow/modeler
+      idm-url: http://localhost:8032/oaflow/modeler
       idm-admin:
         user: SRV-TestAdmin.ADD
         password: 2wsx!QAZ
